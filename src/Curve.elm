@@ -1,15 +1,9 @@
-module Curve exposing (Curve, Point, Path, line, bezier, spline, pointAt, asPath, readPath)
+module Curve exposing (Curve, Point, Path, line, arc, fromEasing, bezier, catmullRom, loose, tight, arc, pointAt)
 
 {-|
-@docs Curve, Point, Path, line, bezier, cubic, pointAt, asPath, readPath
+@docs Curve, Point, line, tight, loose, arc, fromEasing, bezier, catmullRom, pointAt
 
 -}
-
-
-{-| A Path is a list of curves, much as it's defined in SVG.  In fact, this is generally only used for SVG!
--}
-type alias Path =
-    List Curve
 
 
 {-|
@@ -22,8 +16,18 @@ type alias Point =
 -}
 type Curve
     = Bezier Point (List Point)
-    | Spline Point (List Point)
+    | CatmullRom Point (List Point)
     | Line Point Point
+    | Arc
+        { clockwise : Bool
+        , origin : Point
+        , startAngle : Angle
+        , endAngle : Angle
+        }
+
+
+type alias Angle =
+    Float
 
 
 {-| -}
@@ -38,10 +42,50 @@ bezier =
     Bezier
 
 
+{-| An alias for a bezier curve.
+-}
+loose : Point -> List Point -> Curve
+loose =
+    bezier
+
+
 {-| -}
-spline : Point -> List Point -> Point -> Curve
-spline =
-    Spline
+catmullRom : Point -> List Point -> Point -> Curve
+catmullRom =
+    CatmullRom
+
+
+{-| An alias for a catmullRom curve.
+-}
+tight : Point -> List Point -> Curve
+tight =
+    catmullRom
+
+
+{-| -}
+arc :
+    { clockwise : Bool
+    , origin : Point
+    , startAngle : Angle
+    , endAngle : Angle
+    }
+    -> Curve
+arc =
+    Arc
+
+
+{-|
+-}
+fromEasing : (Float -> Float) -> Curve
+fromEasing ease =
+    fromFunction ease 10 0 1
+
+
+{-|
+-}
+fromFunction : (Float -> Float) -> Int -> Float -> Float -> Curve
+fromFunction fn numPoints start end =
+    Debug.crash
 
 
 {-| Get the point at a certain percentage along the curve.  Percentage is represented as a value from 0 to 1.
@@ -57,7 +101,10 @@ pointAt t curve =
             , s2 + (t * (e2 - s2))
             )
 
-        Spline start points ->
+        Arc _ ->
+            Debug.crash
+
+        CatmullRom start points ->
             case points of
                 [] ->
                     start
@@ -109,17 +156,3 @@ Map x from interval `i` to interval `j`
 interpolateLinearly : Interval -> Interval -> Float -> Float
 interpolateLinearly ( istart, iend ) ( jstart, jend ) x =
     istart + (iend - istart) * (x - jstart) / (jend - jstart)
-
-
-{-| Render a `Curve.Path` as [an svg path](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d).
--}
-asPath : Path -> String
-asPath path =
-    Debug.crash
-
-
-{-| Parse an SVG path string as a Curve.Path
--}
-readPath : String -> Maybe Path
-readPath path =
-    Debug.crash
