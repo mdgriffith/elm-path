@@ -185,6 +185,9 @@ pointAt curve x =
                     [] ->
                         defaultPoint
 
+                    head :: [] ->
+                        head
+
                     head :: remaining ->
                         if t == 0 then
                             head

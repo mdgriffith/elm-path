@@ -34,8 +34,8 @@ view model =
         [ h1 [] [ text "test" ]
         , Svg.svg [ Svg.Attributes.width "1000", Svg.Attributes.height "600" ]
             [ Svg.g []
-                [ --viewCurve <| Curve.line ( 50, 50 ) ( 200, 70 )
-                  viewCurve <|
+                [ viewCurve <| Curve.line ( 50, 50 ) ( 200, 70 )
+                , viewCurve <|
                     Curve.bezier
                         [ 50 => 250
                         , 200 => 100
@@ -43,12 +43,12 @@ view model =
                         , 400 => 250
                         , 500 => 150
                         ]
-                  --, viewCurve <|
-                  --    Curve.catmullRom ( 50, 500 )
-                  --        ( 400, 500 )
-                  --        [ 200 => 350
-                  --        , 300 => 550
-                  --        ]
+                , viewCurve <|
+                    Curve.catmullRom ( 50, 500 )
+                        ( 400, 500 )
+                        [ 200 => 350
+                        , 300 => 550
+                        ]
                 ]
             ]
         ]
