@@ -1,7 +1,7 @@
-module Curve exposing (Curve, Point, line, lines, arc, fromEasing, bezier, catmullRom, loose, tight, pointAt, points, length, controlPoints)
+module Curve exposing (Curve, Point, line, manyLines, arc, fromEasing, bezier, catmullRom, loose, tight, pointAt, points, length, controlPoints)
 
 {-|
-@docs Curve, Point, line, lines, tight, loose, arc, fromEasing, bezier, catmullRom, pointAt, points, length, controlPoints
+@docs Curve, Point, line, manyLines, tight, loose, arc, fromEasing, bezier, catmullRom, pointAt, points, length, controlPoints
 
 -}
 
@@ -38,8 +38,8 @@ line =
 
 
 {-| -}
-lines : List Point -> Curve
-lines =
+manyLines : List Point -> Curve
+manyLines =
     ManyLines
 
 
@@ -57,9 +57,9 @@ loose =
 
 
 {-| -}
-catmullRom : Point -> Point -> List Point -> Curve
-catmullRom =
-    CatmullRom
+catmullRom : Point -> List Point -> Point -> Curve
+catmullRom ctrl1 points ctrl2 =
+    CatmullRom ctrl1 ctrl2 points
 
 
 {-| An alias for a catmullRom curve.
@@ -70,7 +70,7 @@ tight points =
         ( ctrl1, ctrl2 ) =
             extrapolateControlPoints points
     in
-        catmullRom ctrl1 ctrl2 points
+        catmullRom ctrl1 points ctrl2
 
 
 {-| -}
@@ -158,7 +158,7 @@ fromFunction fn numPoints start end =
         ( ctrl1, ctrl2 ) =
             extrapolateControlPoints pointsOnFn
     in
-        catmullRom ctrl1 ctrl2 pointsOnFn
+        catmullRom ctrl1 pointsOnFn ctrl2
 
 
 {-| -}

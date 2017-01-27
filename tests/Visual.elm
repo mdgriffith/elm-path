@@ -79,12 +79,13 @@ view model =
                         , 500 => 150
                         ]
                 , viewCurve <|
-                    Curve.catmullRom ( 50, 500 )
-                        ( 600, 570 )
+                    Curve.catmullRom
+                        ( 50, 500 )
                         [ 200 => 350
                         , 300 => 550
                         , 500 => 600
                         ]
+                        ( 600, 570 )
                 ]
             ]
         , div []
@@ -92,6 +93,7 @@ view model =
         ]
 
 
+easingStyle : List ( String, String )
 easingStyle =
     [ "position" => "relative"
     , "background-color" => "#eee"
