@@ -85,7 +85,7 @@ arc =
 -}
 fromEasing : (Float -> Float) -> Curve
 fromEasing ease =
-    fromFunction ease 10 0 1
+    fromFunction ease 100 0 1
 
 
 {-| From p1 to p2, extrapolate point
@@ -148,7 +148,7 @@ length curve =
             List.sum <| List.map2 lineSegmentLength pnts (List.drop 1 pnts)
 
         otherwise ->
-            points curve 20
+            points 20 curve
                 |> (\pnts -> List.sum <| List.map2 lineSegmentLength pnts (List.drop 1 pnts))
 
 
@@ -158,8 +158,8 @@ lineSegmentLength ( x1, y1 ) ( x2, y2 ) =
 
 
 {-| -}
-points : Curve -> Int -> List Point
-points curve numPoints =
+points : Int -> Curve -> List Point
+points numPoints curve =
     let
         absNumPoints =
             abs numPoints
