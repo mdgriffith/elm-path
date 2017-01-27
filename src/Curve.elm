@@ -65,8 +65,12 @@ catmullRom =
 {-| An alias for a catmullRom curve.
 -}
 tight : List Point -> Curve
-tight =
-    catmullRom defaultPoint defaultPoint
+tight points =
+    let
+        ( ctrl1, ctrl2 ) =
+            extrapolateControlPoints points
+    in
+        catmullRom ctrl1 ctrl2 points
 
 
 {-| -}
@@ -104,6 +108,43 @@ extrapolatePoint ( x1, y1 ) ( x2, y2 ) =
         )
 
 
+extrapolateControlPoints : List Point -> ( Point, Point )
+extrapolateControlPoints points =
+    let
+        horizontal ( x, y ) dx =
+            ( x + dx, y )
+
+        extrapolateEndPoints s1 s2 remaining =
+            case remaining of
+                [] ->
+                    extrapolatePoint s1 s2
+
+                head :: [] ->
+                    extrapolatePoint s2 head
+
+                all ->
+                    all
+                        |> List.drop (List.length all - 2)
+                        |> toSegments
+                        |> List.head
+                        |> Maybe.withDefault ( s1, s2 )
+                        |> uncurry extrapolatePoint
+    in
+        case points of
+            [] ->
+                ( defaultPoint, defaultPoint )
+
+            start :: [] ->
+                ( horizontal start 5
+                , horizontal start -5
+                )
+
+            s1 :: s2 :: remaining ->
+                ( extrapolatePoint s2 s1
+                , extrapolateEndPoints s1 s2 remaining
+                )
+
+
 {-|
 -}
 fromFunction : (Float -> Float) -> Int -> Float -> Float -> Curve
@@ -114,21 +155,10 @@ fromFunction fn numPoints start end =
                 |> List.range 0
                 |> List.map ((\x -> ( x, fn x )) << (\x -> start + ((x / (toFloat <| abs numPoints)) * (end - start))) << toFloat)
 
-        ctrl points =
-            case points of
-                [] ->
-                    defaultPoint
-
-                start :: [] ->
-                    defaultPoint
-
-                s1 :: s2 :: _ ->
-                    extrapolatePoint s2 s1
+        ( ctrl1, ctrl2 ) =
+            extrapolateControlPoints pointsOnFn
     in
-        catmullRom
-            (ctrl pointsOnFn)
-            (ctrl (List.reverse pointsOnFn))
-            pointsOnFn
+        catmullRom ctrl1 ctrl2 pointsOnFn
 
 
 {-| -}
