@@ -88,11 +88,47 @@ fromEasing ease =
     fromFunction ease 10 0 1
 
 
+{-| From p1 to p2, extrapolate point
+-}
+extrapolatePoint : Point -> Point -> Point
+extrapolatePoint ( x1, y1 ) ( x2, y2 ) =
+    let
+        dx =
+            x1 - x2
+
+        dy =
+            y1 - y2
+    in
+        ( x2 + dx
+        , y2 + dy
+        )
+
+
 {-|
 -}
 fromFunction : (Float -> Float) -> Int -> Float -> Float -> Curve
 fromFunction fn numPoints start end =
-    line ( 0, 0 ) ( 1, 1 )
+    let
+        pointsOnFn =
+            abs numPoints
+                |> List.range 0
+                |> List.map ((\x -> ( x, fn x )) << (\x -> start + ((x / (toFloat <| abs numPoints)) * (end - start))) << toFloat)
+
+        ctrl points =
+            case points of
+                [] ->
+                    defaultPoint
+
+                start :: [] ->
+                    defaultPoint
+
+                s1 :: s2 :: _ ->
+                    extrapolatePoint s2 s1
+    in
+        catmullRom
+            (ctrl pointsOnFn)
+            (ctrl (List.reverse pointsOnFn))
+            pointsOnFn
 
 
 {-| -}
@@ -104,20 +140,21 @@ defaultPoint =
 {-| -}
 length : Curve -> Float
 length curve =
-    let
-        lineSegmentLength ( x1, y1 ) ( x2, y2 ) =
-            sqrt <| (x2 - x1) ^ 2 + (y2 - y1) ^ 2
-    in
-        case curve of
-            Line p1 p2 ->
-                lineSegmentLength p1 p2
+    case curve of
+        Line p1 p2 ->
+            lineSegmentLength p1 p2
 
-            ManyLines pnts ->
-                List.sum <| List.map2 lineSegmentLength pnts (List.drop 1 pnts)
+        ManyLines pnts ->
+            List.sum <| List.map2 lineSegmentLength pnts (List.drop 1 pnts)
 
-            otherwise ->
-                points curve 20
-                    |> (\pnts -> List.sum <| List.map2 lineSegmentLength pnts (List.drop 1 pnts))
+        otherwise ->
+            points curve 20
+                |> (\pnts -> List.sum <| List.map2 lineSegmentLength pnts (List.drop 1 pnts))
+
+
+lineSegmentLength : Point -> Point -> Float
+lineSegmentLength ( x1, y1 ) ( x2, y2 ) =
+    sqrt <| (x2 - x1) ^ 2 + (y2 - y1) ^ 2
 
 
 {-| -}
@@ -168,17 +205,64 @@ pointAt curve x =
             Arc _ ->
                 defaultPoint
 
-            CatmullRom ctrl1 ctrl2 points ->
-                case points of
+            CatmullRom ctrl1 ctrl2 pnts ->
+                case pnts of
                     [] ->
                         defaultPoint
 
                     start :: [] ->
                         start
 
-                    start :: second :: _ ->
-                        -- Can do real catmullRom
-                        catmullRomPointOnSegment ctrl1 start second ctrl2 t
+                    start :: second :: remaining ->
+                        let
+                            controls =
+                                controlPoints curve
+
+                            segmentLengths =
+                                List.map4
+                                    (\a b c d ->
+                                        ( catmullRomSegmentLength 10 a b c d, a, b, c, d )
+                                    )
+                                    controls
+                                    (List.drop 1 controls)
+                                    (List.drop 2 controls)
+                                    (List.drop 3 controls)
+
+                            totalLength =
+                                List.map (\( segLen, _, _, _, _ ) -> segLen) segmentLengths
+                                    |> List.sum
+
+                            ( maybePoint, _ ) =
+                                List.foldl
+                                    (\( segLen, a, b, c, d ) ( found, runningTotal ) ->
+                                        case found of
+                                            Just _ ->
+                                                ( found, runningTotal )
+
+                                            Nothing ->
+                                                if (runningTotal + segLen) / totalLength > t then
+                                                    let
+                                                        localT =
+                                                            ((t * totalLength) - runningTotal) / segLen
+
+                                                        _ =
+                                                            Debug.log "local-t, t" ( localT, t )
+                                                    in
+                                                        ( Just (catmullRomPointOnSegment a b c d localT)
+                                                        , runningTotal
+                                                        )
+                                                else
+                                                    ( Nothing, runningTotal + segLen )
+                                    )
+                                    ( Nothing, 0 )
+                                    segmentLengths
+                        in
+                            case maybePoint of
+                                Just x ->
+                                    x
+
+                                _ ->
+                                    defaultPoint
 
             Bezier points ->
                 case points of
@@ -195,6 +279,28 @@ pointAt curve x =
                             List.map2 (interpolatePoint t) points remaining
                                 |> Bezier
                                 |> (\curve -> pointAt curve t)
+
+
+toSegments : List Point -> List ( Point, Point )
+toSegments points =
+    List.map2 (,) points (List.drop 1 points)
+
+
+catmullRomSegmentLength : Int -> Point -> Point -> Point -> Point -> Float
+catmullRomSegmentLength resolution p0 p1 p2 p3 =
+    let
+        res =
+            abs resolution
+
+        pollPoints =
+            List.range 0 res
+                |> List.map (\x -> toFloat x / toFloat res)
+    in
+        pollPoints
+            |> List.map (catmullRomPointOnSegment p0 p1 p2 p3)
+            |> toSegments
+            |> List.map (uncurry lineSegmentLength)
+            |> List.sum
 
 
 catmullRomPointOnSegment : Point -> Point -> Point -> Point -> Float -> Point

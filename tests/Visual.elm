@@ -32,7 +32,7 @@ view model =
         [ Html.Attributes.style centered
         ]
         [ h1 [] [ text "test" ]
-        , Svg.svg [ Svg.Attributes.width "1000", Svg.Attributes.height "600" ]
+        , Svg.svg [ Svg.Attributes.width "1000", Svg.Attributes.height "1000" ]
             [ Svg.g []
                 [ viewCurve <| Curve.line ( 50, 50 ) ( 200, 70 )
                 , viewCurve <|
@@ -45,9 +45,10 @@ view model =
                         ]
                 , viewCurve <|
                     Curve.catmullRom ( 50, 500 )
-                        ( 400, 500 )
+                        ( 600, 570 )
                         [ 200 => 350
                         , 300 => 550
+                        , 500 => 600
                         ]
                 ]
             ]
@@ -62,9 +63,29 @@ viewCurve curve =
 
         points =
             Curve.points curve 20
+
+        controlLines =
+            List.map2 (,) controls (List.drop 1 controls)
     in
         Svg.g []
             [ Svg.g []
+                (List.map
+                    (\( ( x1, y1 ), ( x2, y2 ) ) ->
+                        Svg.line
+                            [ Svg.Attributes.x1 (toString x1)
+                            , Svg.Attributes.y1 (toString y1)
+                            , Svg.Attributes.x2 (toString x2)
+                            , Svg.Attributes.y2 (toString y2)
+                            , Svg.Attributes.stroke "#ddd"
+                            , Svg.Attributes.strokeDasharray "5,5"
+                            , Svg.Attributes.fill "white"
+                            , Svg.Attributes.fillOpacity "0"
+                            ]
+                            []
+                    )
+                    controlLines
+                )
+            , Svg.g []
                 (List.map
                     (\( x, y ) ->
                         Svg.circle
@@ -80,17 +101,27 @@ viewCurve curve =
                     points
                 )
             , Svg.g []
-                (List.map
+                (List.concatMap
                     (\( x, y ) ->
-                        Svg.circle
+                        [ Svg.circle
+                            [ Svg.Attributes.cx (toString x)
+                            , Svg.Attributes.cy (toString y)
+                            , Svg.Attributes.r (toString 8)
+                            , Svg.Attributes.strokeWidth "0"
+                            , Svg.Attributes.fill "white"
+                            , Svg.Attributes.fillOpacity "1"
+                            ]
+                            []
+                        , Svg.circle
                             [ Svg.Attributes.cx (toString x)
                             , Svg.Attributes.cy (toString y)
                             , Svg.Attributes.r (toString 5)
                             , Svg.Attributes.stroke "black"
                             , Svg.Attributes.fill "white"
-                            , Svg.Attributes.fillOpacity "0"
+                            , Svg.Attributes.fillOpacity "1"
                             ]
                             []
+                        ]
                     )
                     controls
                 )
