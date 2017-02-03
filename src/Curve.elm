@@ -161,6 +161,17 @@ fromFunction fn numPoints start end =
         catmullRom ctrl1 pointsOnFn ctrl2
 
 
+fromFunctionToLine : (Float -> Float) -> Int -> Float -> Float -> Curve
+fromFunctionToLine fn numPoints start end =
+    let
+        pointsOnFn =
+            abs numPoints
+                |> List.range 0
+                |> List.map ((\x -> ( x, fn x )) << (\x -> start + ((x / (toFloat <| abs numPoints)) * (end - start))) << toFloat)
+    in
+        ManyLines pointsOnFn
+
+
 {-| -}
 defaultPoint : Point
 defaultPoint =
@@ -274,9 +285,6 @@ pointAt curve x =
                                                     let
                                                         localT =
                                                             ((t * totalLength) - runningTotal) / segLen
-
-                                                        _ =
-                                                            Debug.log "local-t, t" ( localT, t )
                                                     in
                                                         ( Just (catmullRomPointOnSegment a b c d localT)
                                                         , runningTotal
