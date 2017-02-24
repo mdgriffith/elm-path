@@ -1,7 +1,7 @@
-module Curve exposing (Curve, Point, line, manyLines, arc, fromEasing, bezier, catmullRom, loose, tight, pointAt, points, length, controlPoints)
+module Curve exposing (Curve, Point, line, polyline, arc, fromEasing, bezier, catmullRom, loose, tight, tangentAt, pointAt, vectorAt, points, length)
 
 {-|
-@docs Curve, Point, line, manyLines, tight, loose, arc, fromEasing, bezier, catmullRom, pointAt, points, length, controlPoints
+@docs Curve, Point, line, polyline, tight, loose, arc, fromEasing, bezier, catmullRom,  pointAt, points, tangentAt, vectorAt,  length
 
 -}
 
@@ -12,19 +12,33 @@ type alias Point =
     ( Float, Float )
 
 
+type Primitive
+    = CubicSegment Point Point Point Point
+    | QuadraticSegment Point Point Point
+    | LineSegment Point Point
+
+
 {-|
 -}
 type Curve
     = Bezier (List Point)
     | CatmullRom Point Point (List Point)
     | Line Point Point
-    | ManyLines (List Point)
+    | Polyline (List Point)
     | Arc
         { clockwise : Bool
         , origin : Point
         , startAngle : Angle
         , endAngle : Angle
         }
+
+
+
+--type BoundaryCondition
+--    = Clamped Vector
+--    | Free
+--    | NotAKnot
+--Matlab
 
 
 type alias Angle =
@@ -38,22 +52,15 @@ line =
 
 
 {-| -}
-manyLines : List Point -> Curve
-manyLines =
-    ManyLines
+polyline : List Point -> Curve
+polyline =
+    PolyLine
 
 
 {-| -}
 bezier : List Point -> Curve
 bezier =
     Bezier
-
-
-{-| An alias for a bezier curve.
--}
-loose : List Point -> Curve
-loose =
-    bezier
 
 
 {-| -}
@@ -64,8 +71,8 @@ catmullRom ctrl1 points ctrl2 =
 
 {-| An alias for a catmullRom curve.
 -}
-tight : List Point -> Curve
-tight points =
+curve : List Point -> Curve
+curve points =
     let
         ( ctrl1, ctrl2 ) =
             extrapolateControlPoints points
@@ -169,7 +176,7 @@ fromFunctionToLine fn numPoints start end =
                 |> List.range 0
                 |> List.map ((\x -> ( x, fn x )) << (\x -> start + ((x / (toFloat <| abs numPoints)) * (end - start))) << toFloat)
     in
-        ManyLines pointsOnFn
+        Polyline pointsOnFn
 
 
 {-| -}
@@ -185,7 +192,7 @@ length curve =
         Line p1 p2 ->
             lineSegmentLength p1 p2
 
-        ManyLines pnts ->
+        Polyline pnts ->
             List.sum <| List.map2 lineSegmentLength pnts (List.drop 1 pnts)
 
         otherwise ->
@@ -198,7 +205,8 @@ lineSegmentLength ( x1, y1 ) ( x2, y2 ) =
     sqrt <| (x2 - x1) ^ 2 + (y2 - y1) ^ 2
 
 
-{-| -}
+{-| Retrieve
+-}
 points : Int -> Curve -> List Point
 points numPoints curve =
     let
@@ -207,6 +215,26 @@ points numPoints curve =
     in
         List.range 0 absNumPoints
             |> List.map ((pointAt curve) << (\x -> toFloat x / toFloat absNumPoints))
+
+
+{-| Get the tangent at a certain percentage along the curve.
+
+Percentage is represented as a value from 0 to 1.
+
+The percentage will wrap around to the beginning if it exceeds 1.0.  Same with values below 0.
+
+Angle returned is in the standard Elm rotational units (radians).
+-}
+tangentAt : Curve -> Float -> Angle
+tangentAt curve x =
+    pi
+
+
+{-|
+-}
+vectorAt : Curve -> Float -> ( Point, Angle )
+vectorAt curve x =
+    ( defaultPoint, pi )
 
 
 {-| Get the point at a certain percentage along the curve.  Percentage is represented as a value from 0 to 1.
@@ -231,7 +259,7 @@ pointAt curve x =
                 , s2 + (t * (e2 - s2))
                 )
 
-            ManyLines points ->
+            Polyline points ->
                 case points of
                     [] ->
                         defaultPoint
@@ -369,26 +397,6 @@ catmullRomPointOnSegment p0 p1 p2 p3 t =
             (Tuple.second p0) * f1 + (Tuple.second p1) * f2 + (Tuple.second p2) * f3 + (Tuple.second p3) * f4
     in
         ( x, y )
-
-
-{-| -}
-controlPoints : Curve -> List Point
-controlPoints curve =
-    case curve of
-        Line p1 p2 ->
-            [ p1, p2 ]
-
-        ManyLines points ->
-            points
-
-        Arc _ ->
-            []
-
-        CatmullRom ctrl1 ctrl2 remaining ->
-            ctrl1 :: remaining ++ [ ctrl2 ]
-
-        Bezier points ->
-            points
 
 
 {-| -}

@@ -8773,28 +8773,12 @@ var _user$project$Curve$arc = _user$project$Curve$Arc;
 var _user$project$Curve$ManyLines = function (a) {
 	return {ctor: 'ManyLines', _0: a};
 };
-var _user$project$Curve$lines = _user$project$Curve$ManyLines;
-var _user$project$Curve$Line = F2(
-	function (a, b) {
-		return {ctor: 'Line', _0: a, _1: b};
-	});
-var _user$project$Curve$line = _user$project$Curve$Line;
-var _user$project$Curve$CatmullRom = F3(
-	function (a, b, c) {
-		return {ctor: 'CatmullRom', _0: a, _1: b, _2: c};
-	});
-var _user$project$Curve$catmullRom = _user$project$Curve$CatmullRom;
-var _user$project$Curve$tight = function (points) {
-	var _p29 = _user$project$Curve$extrapolateControlPoints(points);
-	var ctrl1 = _p29._0;
-	var ctrl2 = _p29._1;
-	return A3(_user$project$Curve$catmullRom, ctrl1, ctrl2, points);
-};
-var _user$project$Curve$fromFunction = F4(
+var _user$project$Curve$manyLines = _user$project$Curve$ManyLines;
+var _user$project$Curve$fromFunctionToLine = F4(
 	function (fn, numPoints, start, end) {
 		var pointsOnFn = A2(
 			_elm_lang$core$List$map,
-			function (_p30) {
+			function (_p29) {
 				return function (x) {
 					return {
 						ctor: '_Tuple2',
@@ -8806,16 +8790,59 @@ var _user$project$Curve$fromFunction = F4(
 						return start + ((x / _elm_lang$core$Basics$toFloat(
 							_elm_lang$core$Basics$abs(numPoints))) * (end - start));
 					}(
-						_elm_lang$core$Basics$toFloat(_p30)));
+						_elm_lang$core$Basics$toFloat(_p29)));
 			},
 			A2(
 				_elm_lang$core$List$range,
 				0,
 				_elm_lang$core$Basics$abs(numPoints)));
-		var _p31 = _user$project$Curve$extrapolateControlPoints(pointsOnFn);
-		var ctrl1 = _p31._0;
-		var ctrl2 = _p31._1;
-		return A3(_user$project$Curve$catmullRom, ctrl1, ctrl2, pointsOnFn);
+		return _user$project$Curve$ManyLines(pointsOnFn);
+	});
+var _user$project$Curve$Line = F2(
+	function (a, b) {
+		return {ctor: 'Line', _0: a, _1: b};
+	});
+var _user$project$Curve$line = _user$project$Curve$Line;
+var _user$project$Curve$CatmullRom = F3(
+	function (a, b, c) {
+		return {ctor: 'CatmullRom', _0: a, _1: b, _2: c};
+	});
+var _user$project$Curve$catmullRom = F3(
+	function (ctrl1, points, ctrl2) {
+		return A3(_user$project$Curve$CatmullRom, ctrl1, ctrl2, points);
+	});
+var _user$project$Curve$tight = function (points) {
+	var _p30 = _user$project$Curve$extrapolateControlPoints(points);
+	var ctrl1 = _p30._0;
+	var ctrl2 = _p30._1;
+	return A3(_user$project$Curve$catmullRom, ctrl1, points, ctrl2);
+};
+var _user$project$Curve$fromFunction = F4(
+	function (fn, numPoints, start, end) {
+		var pointsOnFn = A2(
+			_elm_lang$core$List$map,
+			function (_p31) {
+				return function (x) {
+					return {
+						ctor: '_Tuple2',
+						_0: x,
+						_1: fn(x)
+					};
+				}(
+					function (x) {
+						return start + ((x / _elm_lang$core$Basics$toFloat(
+							_elm_lang$core$Basics$abs(numPoints))) * (end - start));
+					}(
+						_elm_lang$core$Basics$toFloat(_p31)));
+			},
+			A2(
+				_elm_lang$core$List$range,
+				0,
+				_elm_lang$core$Basics$abs(numPoints)));
+		var _p32 = _user$project$Curve$extrapolateControlPoints(pointsOnFn);
+		var ctrl1 = _p32._0;
+		var ctrl2 = _p32._1;
+		return A3(_user$project$Curve$catmullRom, ctrl1, pointsOnFn, ctrl2);
 	});
 var _user$project$Curve$fromEasing = function (ease) {
 	return A4(_user$project$Curve$fromFunction, ease, 100, 0, 1);
@@ -8830,15 +8857,15 @@ var _user$project$Curve$pointAt = F2(
 		var t = (_elm_lang$core$Native_Utils.cmp(x, 1.0) > 0) ? (x - _elm_lang$core$Basics$toFloat(
 			_elm_lang$core$Basics$round(x))) : ((_elm_lang$core$Native_Utils.cmp(x, 0) < 0) ? (1.0 - _elm_lang$core$Basics$toFloat(
 			_elm_lang$core$Basics$floor(x))) : x);
-		var _p32 = curve;
-		switch (_p32.ctor) {
+		var _p33 = curve;
+		switch (_p33.ctor) {
 			case 'Line':
-				var _p34 = _p32._0._1;
-				var _p33 = _p32._0._0;
-				return {ctor: '_Tuple2', _0: _p33 + (t * (_p32._1._0 - _p33)), _1: _p34 + (t * (_p32._1._1 - _p34))};
+				var _p35 = _p33._0._1;
+				var _p34 = _p33._0._0;
+				return {ctor: '_Tuple2', _0: _p34 + (t * (_p33._1._0 - _p34)), _1: _p35 + (t * (_p33._1._1 - _p35))};
 			case 'ManyLines':
-				var _p35 = _p32._0;
-				if (_p35.ctor === '[]') {
+				var _p36 = _p33._0;
+				if (_p36.ctor === '[]') {
 					return _user$project$Curve$defaultPoint;
 				} else {
 					var totalLength = _user$project$Curve$length(curve);
@@ -8847,12 +8874,12 @@ var _user$project$Curve$pointAt = F2(
 			case 'Arc':
 				return _user$project$Curve$defaultPoint;
 			case 'CatmullRom':
-				var _p36 = _p32._2;
-				if (_p36.ctor === '[]') {
+				var _p37 = _p33._2;
+				if (_p37.ctor === '[]') {
 					return _user$project$Curve$defaultPoint;
 				} else {
-					if (_p36._1.ctor === '[]') {
-						return _p36._0;
+					if (_p37._1.ctor === '[]') {
+						return _p37._0;
 					} else {
 						var controls = _user$project$Curve$controlPoints(curve);
 						var segmentLengths = A5(
@@ -8875,34 +8902,30 @@ var _user$project$Curve$pointAt = F2(
 						var totalLength = _elm_lang$core$List$sum(
 							A2(
 								_elm_lang$core$List$map,
-								function (_p37) {
-									var _p38 = _p37;
-									return _p38._0;
+								function (_p38) {
+									var _p39 = _p38;
+									return _p39._0;
 								},
 								segmentLengths));
-						var _p39 = A3(
+						var _p40 = A3(
 							_elm_lang$core$List$foldl,
 							F2(
-								function (_p41, _p40) {
-									var _p42 = _p41;
-									var _p48 = _p42._0;
-									var _p43 = _p40;
-									var _p47 = _p43._1;
-									var _p46 = _p43._0;
-									var _p44 = _p46;
-									if (_p44.ctor === 'Just') {
+								function (_p42, _p41) {
+									var _p43 = _p42;
+									var _p48 = _p43._0;
+									var _p44 = _p41;
+									var _p47 = _p44._1;
+									var _p46 = _p44._0;
+									var _p45 = _p46;
+									if (_p45.ctor === 'Just') {
 										return {ctor: '_Tuple2', _0: _p46, _1: _p47};
 									} else {
 										if (_elm_lang$core$Native_Utils.cmp((_p47 + _p48) / totalLength, t) > 0) {
 											var localT = ((t * totalLength) - _p47) / _p48;
-											var _p45 = A2(
-												_elm_lang$core$Debug$log,
-												'local-t, t',
-												{ctor: '_Tuple2', _0: localT, _1: t});
 											return {
 												ctor: '_Tuple2',
 												_0: _elm_lang$core$Maybe$Just(
-													A5(_user$project$Curve$catmullRomPointOnSegment, _p42._1, _p42._2, _p42._3, _p42._4, localT)),
+													A5(_user$project$Curve$catmullRomPointOnSegment, _p43._1, _p43._2, _p43._3, _p43._4, localT)),
 												_1: _p47
 											};
 										} else {
@@ -8912,7 +8935,7 @@ var _user$project$Curve$pointAt = F2(
 								}),
 							{ctor: '_Tuple2', _0: _elm_lang$core$Maybe$Nothing, _1: 0},
 							segmentLengths);
-						var maybePoint = _p39._0;
+						var maybePoint = _p40._0;
 						var _p49 = maybePoint;
 						if (_p49.ctor === 'Just') {
 							return _p49._0;
@@ -8922,7 +8945,7 @@ var _user$project$Curve$pointAt = F2(
 					}
 				}
 			default:
-				var _p51 = _p32._0;
+				var _p51 = _p33._0;
 				var _p50 = _p51;
 				if (_p50.ctor === '[]') {
 					return _user$project$Curve$defaultPoint;
@@ -9524,7 +9547,6 @@ var _user$project$Main$view = function (model) {
 											A3(
 												_user$project$Curve$catmullRom,
 												{ctor: '_Tuple2', _0: 50, _1: 500},
-												{ctor: '_Tuple2', _0: 600, _1: 570},
 												{
 													ctor: '::',
 													_0: A2(_user$project$Main_ops['=>'], 200, 350),
@@ -9537,7 +9559,8 @@ var _user$project$Main$view = function (model) {
 															_1: {ctor: '[]'}
 														}
 													}
-												})),
+												},
+												{ctor: '_Tuple2', _0: 600, _1: 570})),
 										_1: {ctor: '[]'}
 									}
 								}
