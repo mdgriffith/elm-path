@@ -15,15 +15,15 @@ type Path
 
 {-| Render a `Curve.Path` as [an svg path](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d).
 -}
-pathString : Path -> String
-pathString path =
+toString : Path -> String
+toString path =
     Debug.crash
 
 
 {-| Parse an SVG path string as a Curve.Path
 -}
-readPath : String -> Maybe Path
-readPath path =
+fromString : String -> Maybe Path
+fromString path =
     Debug.crash
 
 
@@ -51,8 +51,8 @@ continue path1 path2 =
 
 {-|
 -}
-path : List Curve -> Path
-path =
+open : List Curve -> Path
+open =
     Path
 
 
