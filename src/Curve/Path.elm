@@ -27,37 +27,44 @@ fromString path =
     Debug.crash
 
 
-{-| Each curve starts at the end of each previous curve.
--}
-continuous : List Curve -> Path
-continuous =
-    Path
+open : List Curve -> Path
+open =
+    Debug.crash
 
 
-{-| Append path1 to path2
+closed : List Curve -> Path
+closed =
+    Debug.crash
+
+
+{-| Append path1 to path2.
+
 -}
 append : Path -> Path -> Path
 append path1 path2 =
     path2
 
 
-{-| Append path1 to path2,
-but path2's coordinates are relative to the last point given in path1
+{-| Each curve starts at the end of each previous curve.
+Point-wise continuous.  Can have hard angles.
 -}
-continue : Path -> Path -> Path
-continue path1 path2 =
-    path1
+connect : List Curve -> Path
+connect =
+    Debug.crash
 
 
-{-|
+connectPaths : List Path -> Path
+connectPaths =
+    Debug.crash
+
+
+{-| Each curve starts at the end of each previous curve and tangents are matched so it is always smooth.
 -}
-open : List Curve -> Path
-open =
-    Path
+continue : List Curve -> Path
+continue =
+    Debug.crash
 
 
-{-|
--}
-closed : List Curve -> Path
-closed =
-    Closed
+continuePaths : List Path -> Path
+continuePaths =
+    Debug.crash

@@ -26,29 +26,19 @@ line =
     Line
 
 
+horizontal : Int -> Curve
+horizontal x =
+    Line ( 0, 0 ) ( x, 0 )
+
+
+vertical : Int -> Curve
+vertical y =
+    Line ( 0, 0 ) ( 0, y )
+
+
 polyline : List Point -> Curve
 polyline =
     Polyline
-
-
-type Segment
-    = Cubic Point Point Point
-    | Quadratic Point Point Point
-
-
-bezier : Point -> List Segment -> Curve
-bezier =
-    Bezier
-
-
-cubic : Point -> Point -> Segment
-cubic =
-    Debug.crash
-
-
-quadratic : Point -> Point -> Point -> Segment
-quadratic =
-    Debug.crash
 
 
 hermite : List ( Point, Vector ) -> Curve
@@ -56,13 +46,14 @@ hermite =
     Debug.crash
 
 
-arc :
-    { origin : Point
-    , startAngle : Angle
-    , endAngle : Angle
-    , radius : Float
+type alias Arc =
+    { center : Point
+    , start : Point
+    , sweptAngle : Angle
     }
-    -> Curve
+
+
+arc : Arc -> Curve
 arc =
     Arc
 
