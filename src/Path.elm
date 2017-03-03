@@ -72,6 +72,12 @@ segment curve =
     Path [ Segment curve ]
 
 
+
+--------------------
+-- Building Curves
+--------------------
+
+
 line : Point -> Point -> Path
 line start end =
     segment (Polyline [ start, end ])
@@ -92,24 +98,14 @@ polyline =
     Polyline >> segment
 
 
-hermite : List ( Point, Vector ) -> Path
-hermite =
-    Debug.crash "TODO"
-
-
 arc : { center : Point, start : Point, sweptAngle : Angle } -> Path
 arc =
     Arc >> segment
 
 
-quadratic : Point -> Point -> Point -> Path
-quadratic p1 p2 p3 =
-    segment (Quadratic p1 p2 p3)
-
-
-cubic : Point -> Point -> Point -> Point -> Path
-cubic p1 p2 p3 p4 =
-    segment (Cubic p1 p2 p3 p4)
+hermite : List ( Point, Vector ) -> Path
+hermite =
+    Debug.crash "TODO"
 
 
 curve : List Point -> Path
@@ -127,75 +123,62 @@ close (Path segments) =
     Path (segments ++ [ Close ])
 
 
-startAt : Point -> Path
-startAt point =
-    Path [ MoveTo point ]
+
+--------------------
+-- Combining Paths
+--------------------
 
 
-lineTo : Point -> Path -> Path
-lineTo point path =
-    -- Add line from endpoint of path to given point
+{-| Combine paths without modification.
+
+Are we attached to the name?
+I almost feel `concat` might be better here.  Maybe maybe not.
+
+Basically Im not sure if people are going to have an intuiion of what `composite` means
+
+-}
+composite : List Path -> Path
+composite =
     Debug.crash "TODO"
 
 
-horizontalTo : Float -> Path -> Path
-horizontalTo x path =
-    -- Add horizontal line from endpoint of path to given X value
-    Debug.crash "TODO"
+{-| Connect paths via lines.
 
+Name suggestion: connect?  intuition from "connect the dots"
 
-verticalTo : Float -> Path -> Path
-verticalTo y path =
-    -- Add vertical line from endpoint of path to given Y value
-    Debug.crash "TODO"
-
-
-polylineTo : List Point -> Path -> Path
-polylineTo points path =
-    -- Add polyline starting at endpoint of path, going to each of the given points
-    Debug.crash "TODO"
-
-
-arcAround : Point -> Float -> Path -> Path
-arcAround centerPoint sweptAngle path =
-    -- Add arc from endpoint of path, swept around given center by given angle
-    Debug.crash "TODO"
-
-
-quadraticTo : Point -> Point -> Path -> Path
-quadraticTo p2 p3 path =
-    -- Add quadratic spline using endpoint of path as first control point
-    Debug.crash "TODO"
-
-
-cubicTo : Point -> Point -> Point -> Path -> Path
-cubicTo p2 p3 p4 path =
-    -- Add cubic spline using endpoint of path as first control point
-    Debug.crash "TODO"
-
-
-curveTo : List Point -> Path -> Path
-curveTo points path =
-    -- Add Catmull-Rom interpolated curve (with free end condition), using endpoint of path as first point
-    Debug.crash "TODO"
-
-
+-}
 join : List Path -> Path
 join =
     -- add line if necessary between each pair of paths
     Debug.crash "TODO"
 
 
+{-| Adjust each path so that it starts where the previous path finishes
+
+Name suggestions: attach? join?
+
+-}
 concat : List Path -> Path
 concat =
     -- adjust position of each path to start at the endpoint of the previous path
     Debug.crash "TODO"
 
 
-composite : List Path -> Path
-composite =
-    -- add a 'MoveTo' if necessary between each pair of paths
-    Debug.crash "TODO"
+{-| Each curve starts at the end of each previous curve.
+
+Curves are rotated so that their tangents are always smooth.
+
+Name suggestions: connectSmoothely?  maybe continue?
+-}
+smooth : List Path -> Path
+smooth =
+    Debug.crash
+
+
+
+--------------------
+-- Parsing/Encoding
+--------------------
 
 
 {-| Render a `Path` as [an svg path](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d).
@@ -210,6 +193,12 @@ toString path =
 fromString : String -> Maybe Path
 fromString path =
     Debug.crash "TODO"
+
+
+
+--------------------
+-- Reading out data
+--------------------
 
 
 {-| Get the tangent at a certain percentage along the path.
@@ -242,11 +231,25 @@ point =
     Debug.crash "TODO"
 
 
+{-| Get the start point of a path
+-}
 startPoint : Path -> Point
 startPoint =
     Debug.crash "TODO"
 
 
+{-| Get the end point of a path
+-}
 endPoint : Path -> Point
 endPoint =
+    Debug.crash "TODO"
+
+
+{-| Gives best estimate of the length of the path.
+
+For reference: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/pathLength
+
+-}
+length : Path -> Float
+length =
     Debug.crash "TODO"
