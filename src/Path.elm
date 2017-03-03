@@ -15,6 +15,15 @@ module Path
         , curve
         , curveWith
         , close
+        , startAt
+        , lineTo
+        , horizontalTo
+        , verticalTo
+        , polylineTo
+        , arcAround
+        , quadraticTo
+        , cubicTo
+        , curveTo
         , join
         , concat
         , composite
@@ -23,6 +32,8 @@ module Path
         , tangent
         , derivative
         , point
+        , startPoint
+        , endPoint
         )
 
 
@@ -116,6 +127,59 @@ close (Path segments) =
     Path (segments ++ [ Close ])
 
 
+startAt : Point -> Path
+startAt point =
+    Path [ MoveTo point ]
+
+
+lineTo : Point -> Path -> Path
+lineTo point path =
+    -- Add line from endpoint of path to given point
+    Debug.crash "TODO"
+
+
+horizontalTo : Float -> Path -> Path
+horizontalTo x path =
+    -- Add horizontal line from endpoint of path to given X value
+    Debug.crash "TODO"
+
+
+verticalTo : Float -> Path -> Path
+verticalTo y path =
+    -- Add vertical line from endpoint of path to given Y value
+    Debug.crash "TODO"
+
+
+polylineTo : List Point -> Path -> Path
+polylineTo points path =
+    -- Add polyline starting at endpoint of path, going to each of the given points
+    Debug.crash "TODO"
+
+
+arcAround : Point -> Float -> Path -> Path
+arcAround centerPoint sweptAngle path =
+    -- Add arc from endpoint of path, swept around given center by given angle
+    Debug.crash "TODO"
+
+
+quadraticTo : Point -> Point -> Path -> Path
+quadraticTo p2 p3 path =
+    -- Add quadratic spline using endpoint of path as first control point
+    Debug.crash "TODO"
+
+
+cubicTo : Point -> Point -> Point -> Path -> Path
+cubicTo p2 p3 p4 path =
+    -- Add cubic spline using endpoint of path as first control point
+    Debug.crash "TODO"
+
+
+curveTo : List Point -> Path -> Path
+curveTo points path =
+    -- Add Catmull-Rom interpolated curve (with free end condition), using endpoint of path as first point
+    Debug.crash "TODO"
+
+
 join : List Path -> Path
 join =
     -- add line if necessary between each pair of paths
@@ -175,4 +239,14 @@ The percentage will wrap around to the beginning if it exceeds 1.0.  Same with v
 -}
 point : Path -> Float -> Point
 point =
+    Debug.crash "TODO"
+
+
+startPoint : Path -> Point
+startPoint =
+    Debug.crash "TODO"
+
+
+endPoint : Path -> Point
+endPoint =
     Debug.crash "TODO"
