@@ -2,6 +2,12 @@ module Path.Continue exposing (..)
 
 {-| Draw from the end of the previous path.
 
+In general it might also be useful to have functions that not only
+implicitly start at the end of the path, but have a start tangent equal to the
+end tangent of the path - for example, you could have a Catmull-Rom spline that
+used the current end derivative as its clamped starting condition, or have an
+arc construction variant where you'd only need to supply a radius and swept
+angle. -Ian
 -}
 
 
@@ -14,6 +20,10 @@ line point path =
 
 
 {-| Add horizontal line from endpoint of a path to an absolute horizontal value.
+
+I'm a bit worried this could be confusing, as it's not clear whether the value
+is absolute or relative - I rather like separate `horizontalTo` and
+`horizontalBy` functions. -Ian
 -}
 horizontal : Float -> Path -> Path
 horizontal x path =
@@ -21,6 +31,8 @@ horizontal x path =
 
 
 {-| Add vertical line from the endpoint of a path to an absolute vertical value.
+
+Same concern as for `horizontal`... -Ian
 -}
 vertical : Float -> Path -> Path
 vertical y path =
