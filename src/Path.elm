@@ -118,6 +118,14 @@ curveWith =
     Debug.crash "TODO"
 
 
+{-| I think it should be possible to add this - a Catmull-Rom interpolating
+spline that passes through all points and loops around on itself. -Ian
+-}
+loop : List Point -> Path
+loop =
+    Debug.crash "TODO"
+
+
 close : Path -> Path
 close (Path segments) =
     Path (segments ++ [ Close ])
