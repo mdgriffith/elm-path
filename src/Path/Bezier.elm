@@ -12,6 +12,8 @@ quadratic =
 
 
 {-| Continues a quadratic bezier curve from where the previous one ended, and calculates a control point by mirroring.
+
+So this ends up going through every other point in the given list?
 -}
 extendedQuadratic : Point -> Point -> Point -> List Point -> Curve
 extendedQuadratic =

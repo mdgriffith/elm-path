@@ -144,6 +144,8 @@ I almost feel `concat` might be better here.  Maybe maybe not.
 
 Basically Im not sure if people are going to have an intuiion of what `composite` means
 
+I think 'concat' is fine - no strong opinions. The rationale for 'composite'
+was that the SVG spec uses that language in a couple places. -Ian
 -}
 composite : List Path -> Path
 composite =
@@ -154,6 +156,7 @@ composite =
 
 Name suggestion: connect?  intuition from "connect the dots"
 
+connect: I like it! -Ian
 -}
 join : List Path -> Path
 join =
@@ -165,6 +168,8 @@ join =
 
 Name suggestions: attach? join?
 
+I like 'attach' - to me 'join' is more likely to be interpreted as 'join with
+lines' or similar. -Ian
 -}
 concat : List Path -> Path
 concat =
@@ -177,6 +182,9 @@ concat =
 Curves are rotated so that their tangents are always smooth.
 
 Name suggestions: connectSmoothely?  maybe continue?
+
+I kinda like 'smooth', but maybe 'attachSmoothly' to emphasize the similarity
+to 'attach'?
 -}
 smooth : List Path -> Path
 smooth =
