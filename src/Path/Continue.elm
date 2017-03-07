@@ -11,22 +11,26 @@ angle. -Ian
 -}
 
 
-{-| Add line from endpoint of path to an absolute horizontal value.
+{-| Add line from endpoint of path to an absolute point.
 -}
 line : Point -> Path -> Path
 line point path =
-    -- Add line from endpoint of path to given point
     Debug.crash "TODO"
 
 
 {-| Add horizontal line from endpoint of a path to an absolute horizontal value.
 
-I'm a bit worried this could be confusing, as it's not clear whether the value
-is absolute or relative - I rather like separate `horizontalTo` and
-`horizontalBy` functions. -Ian
 -}
-horizontal : Float -> Path -> Path
-horizontal x path =
+horizontalTo : Float -> Path -> Path
+horizontalTo x path =
+    Debug.crash "TODO"
+
+
+{-| Add horizontal line from endpoint of a path _by_ an absolute horizontal value.
+
+-}
+horizontalBy : Float -> Path -> Path
+horizontalBy x path =
     Debug.crash "TODO"
 
 
@@ -34,8 +38,17 @@ horizontal x path =
 
 Same concern as for `horizontal`... -Ian
 -}
-vertical : Float -> Path -> Path
-vertical y path =
+verticalTo : Float -> Path -> Path
+verticalTo y path =
+    Debug.crash "TODO"
+
+
+{-| Add vertical line from the endpoint of a path to an absolute vertical value.
+
+Same concern as for `horizontal`... -Ian
+-}
+verticalBy : Float -> Path -> Path
+verticalBy y path =
     Debug.crash "TODO"
 
 
@@ -43,7 +56,6 @@ vertical y path =
 -}
 polyline : List Point -> Path -> Path
 polyline points path =
-    -- Add polyline starting at endpoint of path, going to each of the given points
     Debug.crash "TODO"
 
 
@@ -52,6 +64,13 @@ polyline points path =
 arcAround : Point -> Float -> Path -> Path
 arcAround centerPoint sweptAngle path =
     -- Add arc from endpoint of path, swept around given center by given angle
+    Debug.crash "TODO"
+
+
+{-|
+-}
+arc : { radius : Float, sweptAngle : Float } -> Path -> Path
+arc radius sweptAngle path =
     Debug.crash "TODO"
 
 
@@ -71,9 +90,16 @@ cubic p2 p3 p4 path =
     Debug.crash "TODO"
 
 
-{-|
+{-| Catmull-Rom interpolated curve (with free end condition), using endpoint of path as first point
 -}
 curve : List Point -> Path -> Path
 curve points path =
-    -- Add Catmull-Rom interpolated curve (with free end condition), using endpoint of path as first point
+    -- Add
+    Debug.crash "TODO"
+
+
+{-| Catmull-Rom interpolated Curve that starts on the endpoint of the path, and is tangent continuous with the previous path.
+-}
+smooth : List Point -> Path -> Path
+smooth points path =
     Debug.crash "TODO"
