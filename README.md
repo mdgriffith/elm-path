@@ -1,4 +1,15 @@
-# elm-curve
+# Elm Path
+
+## Use-Cases!
+
+This library was made to fulfill with the following in mind:
+
+  * Provide a nice interface for drawing/composing curves/paths in raw code
+  * be able to convert to and from svg paths
+  * (elm-style-animation) - Be able to animate something along a curve.  This involves being able to readout points along a curve.
+  * (elm-style-animation) - Be able to convert an easing function into a curve so that any animation can be %100 serialized into JSON
+  * Catmull rom curves are _really_ valuable to animation because you can just specify the checkpoints you want the curve to go through and it will smoothely interpolate between them.  They also convert to bezier curves so can have complete compatibility with svg.
+  
 
 
 
@@ -26,3 +37,4 @@
 [Stroke Dash Interpolation](https://bl.ocks.org/mbostock/5649592)
 
 [Circle Wave](https://bl.ocks.org/mbostock/2d466ec3417722e3568cd83fc35338e3)
+
