@@ -5,6 +5,16 @@ Just a sketch at the moment
 
 -}
 
+type alias Point =
+    ( Float, Float )
+
+
+{-| Angles are always in radians.
+-}
+type alias Angle =
+    Float
+
+
 type Path
     = Path (List Segment)
 
@@ -19,11 +29,11 @@ type Curve
     = Polyline (List Point)
     | Quadratic Point Point Point
     | Cubic Point Point Point Point
-    | Arc { center : Point, start : Point, sweptAngle : Angle }
-
-
-type alias Point =
-    ( Float, Float )
+    | Arc
+        { center : Point
+        , start : Point
+        , sweptAngle : Angle
+        }
 
 
 type BoundaryCondition
@@ -31,13 +41,14 @@ type BoundaryCondition
     | Free
 
 
-type alias Angle =
-    Float
-
-
 segment : Curve -> Path
 segment curve =
     Path [ Segment curve ]
+
+
+segmentLength : Segment -> Float
+segmentLength segment =
+    0
 
 
 
