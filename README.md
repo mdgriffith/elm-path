@@ -5,9 +5,9 @@
 This library was made to fulfill with the following in mind:
 
   * Provide a nice interface for drawing/composing curves/paths in raw code
-  * be able to convert to and from svg paths
-  * (elm-style-animation) - Be able to animate something along a curve.  This involves being able to readout points along a curve.
-  * (elm-style-animation) - Be able to convert an easing function into a curve so that any animation can be %100 serialized into JSON
+  * Convert to and from svg paths
+  * __(elm-style-animation)__ - Be able to animate something along a curve.  This involves being able to readout points along a curve.
+  * __(elm-style-animation)__ - Be able to convert an easing function into a curve so that any animation can be %100 serialized into JSON
   * Catmull rom curves are _really_ valuable to animation because you can just specify the checkpoints you want the curve to go through and it will smoothely interpolate between them.  They also convert to bezier curves so can have complete compatibility with svg.
   
 
