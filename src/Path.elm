@@ -1,41 +1,9 @@
-module Path
-    exposing
-        ( Path
-        , Point
-        , BoundaryCondition(..)
-        , Angle
-        , line
-        , horizontal
-        , vertical
-        , polyline
-        , hermite
-        , arc
-        , quadratic
-        , cubic
-        , curve
-        , curveWith
-        , close
-        , startAt
-        , lineTo
-        , horizontalTo
-        , verticalTo
-        , polylineTo
-        , arcAround
-        , quadraticTo
-        , cubicTo
-        , curveTo
-        , join
-        , concat
-        , composite
-        , toString
-        , fromString
-        , tangent
-        , derivative
-        , point
-        , startPoint
-        , endPoint
-        )
+module Path exposing (..)
 
+{-| 
+Just a sketch at the moment
+
+-}
 
 type Path
     = Path (List Segment)
